@@ -185,7 +185,7 @@
                     let user_offset = new Date().getTimezoneOffset();
                     let time_for_user = new Date(Date.now() / 1000 - user_offset * 60000);
                     let bySelf = '';
-                    let username_if_need = '<p class="chat-user t5Color u-text1">' + userName + '</p>';
+                    let username_if_need = '<p class="chat-user t5Color u-text1">' + data.username + '</p>';
                     let color_time = 't7Color';
                     let mark_if_need = '';
                     document.querySelector('#chat-messages').innerHTML += (
