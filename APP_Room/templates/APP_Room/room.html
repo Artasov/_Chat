@@ -1,0 +1,308 @@
+{% extends 'Core/base.html' %}
+{% load static %}
+{% load tz %}
+{% block title %}{{ room.name }} | ROOM{% endblock %}
+
+{% block link_content_css %}
+    <link href="{% static 'APP_Room/css/chat.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+    <div class="u">
+        <div class="u__container" style="flex-grow: 1;">
+            <div class="u__content u__styled_content u-flex-column-center
+                        no_scrollbar u-disable-tap-highlight"
+                 style="max-width: 500px; width: 100%;flex-grow: 1">
+
+                <div class="chat u__fields no_scrollbar"
+                     style="overflow-y: scroll; flex-grow: 1; gap: 0;">
+                    <div class="u-flex-column-center"
+                         style="width: 100%; position: relative; gap: 0.3em;">
+                        <p class="u-text3 t5Color u-text-align-center"
+                           style="width: 100%; font-weight: 500; letter-spacing: 0.04em;">
+                            {{ room.name }}
+                        </p>
+                        <p class="u-text2 t8Color u-text-align-center unselectable" style="width: 100%;">
+                            <span id="count_connected_users">0</span> online
+                        </p>
+                        <div class="u-line"
+                             style="background-color: rgba(0,0,0,0.3); width: 90%; margin-top: 5px;"></div>
+                        <div style="position: absolute; height: 100%; top: 0; right: 0;">
+                            <a class="u-img-block" href="{% url 'rooms' %}"
+                               style="height: 100%;">
+                                <img src="{% static 'APP_Room/img/logout.png' %}" alt="" class="u-img"
+                                     style="max-height: 30px; filter: invert(0.3);">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="chat-messages u-flex-column-space-between no_scrollbar" id="chat-messages">
+                        {% for m in messages %}
+                            <div class="chat-message-block u-flex-column-center">
+                                <div class="message_mark" style="display: none;"></div>
+                                <div class="chat-message u-flex-column-center
+                                {% if user.get_username == m.user.username %}chat-message_bySelf{% endif %}">
+                                    {% if user.get_username != m.user.username %}
+                                        <p class="chat-user t5Color u-text1">{{ m.user.username }}</p>
+                                    {% endif %}
+                                    <p class="chat-user-message u-text1">{{ m.content }}</p>
+                                    <div class="chat-message-info u-flex-row-space-between">
+                                        <p class="u-text05
+                                        {% if user.get_username == m.user.username %}
+                                        t12Color
+                                        {% else %}
+                                        t7Color
+                                        {% endif %}">
+                                            {% localtime on %}{{ m.date_added|date:'H:i' }}{% endlocaltime %}
+                                        </p>
+                                        {% if user.get_username == m.user.username %}
+                                            <div class="u-img-block" id="m-{{ m.id }}" style="max-height: 20px;">
+                                                <img src="{% static 'APP_Room/img/check-double-mark.png' %}" alt=""
+                                                     class="u-img"
+                                                     style="max-height: 20px; margin-bottom: 8px; filter: invert(0.93)">
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+
+                    <form method="post" action="." class="chat-send_field u-flex-row-space-between">
+                        <div class="u-line" style="
+                             position:absolute; top: 0; left: 0;
+                             width: 100%; background-color: rgba(0,0,0,0.3);"></div>
+                        <label class="u-flex-column-center chat-send_input_field-block">
+                            <textarea type="text" minlength="1" maxlength="1000" name="content"
+                                      placeholder="Your message..."
+                                      class="chat-send_input_field u-text2 t5Color"
+                                      id="chat-message-input"
+                                      style="padding-left: 0.5em;"></textarea>
+                        </label>
+                        <div class="u-flex-column-center" style="padding-bottom: 4px">
+                            <button class="chat-send_btn u-img-block" id="chat-message-submit">
+                                <img src="{% static 'APP_Room/img/send-message.png' %}" alt=""
+                                     class="u-img" style="max-height: 20px; filter: grayscale(1) brightness(1.35)">
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+    {{ room.slug|json_script:"json-roomname" }}
+    {{ request.user.username|json_script:"json-username" }}
+
+    <script>
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        //textarea auto resize
+        $("textarea").each(function () {
+            this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
+        }).on("input", function () {
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+        });
+
+        const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
+        const userName = JSON.parse(document.getElementById('json-username').textContent);
+        const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + roomName + '/');
+        // disconnect
+        chatSocket.onclose = function (e) {
+        }
+
+        // getting msg from ws
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            // if update online
+            if (data.count_connected_users) {
+                document.getElementById('count_connected_users').innerHTML = data.count_connected_users;
+                return;
+            }
+            // if pagination
+            if (data.pagination) {
+                let chat_messages = document.getElementById('chat-messages');
+                let user_offset = new Date().getTimezoneOffset();
+                for (let i = 0; i < data.pagination.length; i++) {
+                    let time_for_user = new Date(Date.parse(data.pagination[i]['date_added']) - user_offset * 60000);
+                    let bySelf;
+                    let username_if_need;
+                    let color_time;
+                    let mark_if_need;
+                    if (data.pagination[i]['user'] === '{{ user.get_username }}') {
+                        mark_if_need = '<div class="u-img-block" style="max-height: 20px;">' +
+                            '<img src="{% static 'APP_Room/img/check-double-mark.png' %}" id="m-' +
+                            data.pagination[i]['message_id'] + '" alt=""' +
+                            'class="u-img"' +
+                            'style="max-height: 20px; margin-bottom: 8px; filter: invert(0.93)">' +
+                            '</div>'
+                        color_time = 't12Color'
+                        bySelf = 'chat-message_bySelf'
+                        username_if_need = ''
+                    } else {
+                        mark_if_need = ''
+                        color_time = 't7Color'
+                        bySelf = ''
+                        username_if_need = '<p class="chat-user t5Color u-text1">' +
+                            data.pagination[i]['user'] + '</p>';
+                    }
+                    chat_messages.insertAdjacentHTML('afterbegin',
+                        '<div class="chat-message-block u-flex-column-center">' +
+                        '<div class="message_mark" style="display: none;"></div>' +
+                        '<div class="chat-message u-flex-column-center ' +
+                        bySelf + '">' +
+                        username_if_need +
+                        '<p class="chat-user-message u-text1">' + data.pagination[i]['content'] + '</p>' +
+                        '<div class="chat-message-info u-flex-row-space-between">' +
+                        '<p class="u-text05 ' +
+                        color_time + '">' +
+                        time_for_user.getHours() + ':' + time_for_user.getMinutes() +
+                        '</p>' +
+                        mark_if_need +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                }
+                // flag for pagination again
+                pagination_flag = 0;
+                return;
+            }
+            // if message
+            if (data.message) {
+                let needed_msg = document.getElementById('m-' + data.message_temp_id);
+                if (needed_msg) { // confirm ur msg
+                    needed_msg.src = '{% static 'APP_Room/img/check-double-mark.png' %}';
+                } else { // create no ur msg
+                    let user_offset = new Date().getTimezoneOffset();
+                    let time_for_user = new Date(Date.now() / 1000 - user_offset * 60000);
+                    let bySelf = '';
+                    let username_if_need = '<p class="chat-user t5Color u-text1">' + userName + '</p>';
+                    let color_time = 't7Color';
+                    let mark_if_need = '';
+                    document.querySelector('#chat-messages').innerHTML += (
+                        '<div class="chat-message-block u-flex-column-center">' +
+                        '<div class="message_mark" style="display: none;"></div>' +
+                        '<div class="chat-message u-flex-column-center ' +
+                        bySelf + '">' +
+                        username_if_need +
+                        '<p class="chat-user-message u-text1">' + data.message + '</p>' +
+                        '<div class="chat-message-info u-flex-row-space-between">' +
+                        '<p class="u-text05 ' +
+                        color_time + '">' +
+                        time_for_user.getHours() + ':' + time_for_user.getMinutes() +
+                        '</p>' +
+                        mark_if_need +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                }
+            }
+        };
+
+        // Sending msg
+        document.querySelector('#chat-message-submit').onclick = function (e) {
+            e.preventDefault()
+
+            const messageInputDom = document.querySelector('#chat-message-input');
+            let message = messageInputDom.value;
+            if (message.value == null ||
+                message.value == undefined ||
+                message.length == 0){
+                messageInputDom.value = '';
+                return false;
+            }
+            let time_for_user = new Date(Date.now());
+            let bySelf;
+            let username_if_need;
+            let color_time;
+            let mark_if_need;
+            let message_temp_id = getRandomInt(100000, 999999);
+            if (userName === '{{ user.get_username }}') {
+                mark_if_need = '<div class="u-img-block" style="max-height: 20px;">' +
+                    '<img src="{% static 'APP_Room/img/check-mark.png' %}" id="m-' +
+                    message_temp_id + '" alt=""' +
+                    'class="u-img"' +
+                    'style="max-height: 20px; margin-bottom: 8px; filter: invert(0.93)">' +
+                    '</div>'
+                color_time = 't12Color'
+                bySelf = 'chat-message_bySelf'
+                username_if_need = ''
+            } else {
+                mark_if_need = ''
+                color_time = 't7Color'
+                bySelf = ''
+                username_if_need = '<p class="chat-user t5Color u-text1">' + userName + '</p>';
+            }
+            document.querySelector('#chat-messages').innerHTML += (
+                '<div class="chat-message-block u-flex-column-center">' +
+                '<div class="message_mark" style="display: none;"></div>' +
+                '<div class="chat-message u-flex-column-center ' +
+                bySelf + '">' +
+                username_if_need +
+                '<p class="chat-user-message u-text1">' + message + '</p>' +
+                '<div class="chat-message-info u-flex-row-space-between">' +
+                '<p class="u-text05 ' +
+                color_time + '">' +
+                time_for_user.getHours() + ':' + time_for_user.getMinutes() +
+                '</p>' +
+                mark_if_need +
+                '</div>' +
+                '</div>' +
+                '</div>'
+            );
+            scrollToBottom();
+
+            chatSocket.send(JSON.stringify({
+                'message_temp_id': message_temp_id,
+                'message': message,
+                'username': userName,
+                'room': roomName
+            }));
+
+            // clear and resize textarea
+            messageInputDom.value = '';
+            let evt = document.createEvent("HTMLEvents")
+            evt.initEvent("input", false, true);
+            messageInputDom.dispatchEvent(evt);
+
+            return false;
+        };
+
+        // Pagination
+        let chat_messages = document.getElementById('chat-messages');
+        var pagination_flag = 0;
+        chat_messages.addEventListener('scroll', () => {
+            if (chat_messages.scrollTop < 500 && pagination_flag === 0 && chatSocket.readyState) { // if end chat is near
+                chatSocket.send(JSON.stringify({
+                    'pagination': 1,
+                    'message_count': document.getElementsByClassName('message_mark').length,
+                }));
+                pagination_flag = 1;
+            }
+        })
+
+        function scrollToBottom() {
+            let objDiv = document.getElementById("chat-messages");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }
+
+        // Sending by ENTER/RETURN and focus on load page
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function (e) {
+            if (e.keyCode === 13) {
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+        scrollToBottom();
+    </script>
+{% endblock %}

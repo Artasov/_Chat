@@ -1,0 +1,67 @@
+@mixin adaptiv-value($property, $maxWidthContainer, $maxWidth, $maketSize, $minSize, $type){
+   $addSize: $maketSize - $minSize;
+   @if $type==1{
+      //Только если меньше контейнера
+      #{$property}: $maketSize + px;
+      @media (max-width: #{$maxWidthContainer + px}){
+         #{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidthContainer - 320}));
+      }
+   }
+   @else if $type==2{
+      //Только если больше контейнера
+      #{$property}: $maketSize + px;
+      @media (max-width: #{$maxWidthContainer + px}){
+         #{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth - 320}));
+      }
+   }
+   @else{
+      //Всегда
+      #{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth - 320}));
+   }
+}
+
+@mixin adaptiv-valueByHeight($property, $maxWidthContainer, $maxWidth, $mixWidth, $maketSize, $minSize, $type){
+   $addSize: $maketSize - $minSize;
+   @if $type==1{
+      //Только если меньше контейнера
+      #{$property}: $maketSize + px;
+      @media (max-height: #{$maxWidthContainer + px}){
+         #{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vh - #{$mixWidth+px}) / #{$maxWidthContainer - #{$mixWidth+px}}));
+      }
+   }
+   @else if $type==2{
+      //Только если больше контейнера
+      #{$property}: $maketSize + px;
+      @media (max-height: #{$maxWidthContainer + px}){
+         #{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vh - #{$mixWidth+px}) / #{$maxWidth - $mixWidth}));
+      }
+   }
+   @else{
+      //Всегда
+      #{$property}: calc(#{$minSize + px} + #{$addSize} * ((100vh - #{$mixWidth+px}) / #{$maxWidth - $mixWidth}));
+   }
+}
+
+@mixin adaptive-font($pcSize, $mobSize, $maxWidth){
+   $addSize: $pcSize - $mobSize;
+   $addMobSize: $addSize + $addSize * 0.7;
+   @media (max-width: 767px){
+      font-size: calc(#{$mobSize+px} + #{$addMobSize} *((100vw - 320px) / #{$maxWidth}));
+   }
+   @media (min-width: 767px){
+      font-size: calc(#{$mobSize+px} + #{$addSize} * (100vw / #{$maxWidth}));
+   }
+}
+
+@function prc($pxOne, $pxTwo){
+   $result: ($pxOne / $pxTwo) * 100%;
+   @return $result;
+}
+@function rem($px){
+   $result: ($px / 16) * rem;
+   @return $result;
+}
+@function em($pxOne, $pxTwo){
+   $result: ($px / 16) * em;
+   @return $result;
+}

@@ -1,0 +1,47 @@
+{% extends 'Core/base.html' %}
+{% load static %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+    <div class="u">
+        <div class="u__container">
+            <div class="
+            u__content
+            u__styled_content
+            u-flex-column-center
+            no_scrollbar
+            u-disable-tap-highlight">
+                <div class="u__fields no_scrollbar"
+                     style="overflow-y: scroll; max-height: calc(100vh - 160px)!important;">                    <div class="u-flex-column-center">
+                        <p class="u-text5 t5Color">Registration</p>
+                    </div>
+                    <form method="post" action="." class="u__fields">{% csrf_token %}
+                        <input type="text" name="username" placeholder="Username"
+                               class="u__field u-text2 t6Color"
+                               style="padding-left: 0.5em;">
+                        <input type="password" name="password1" placeholder="Password"
+                               class="u__field u-text2 t6Color"
+                               style="padding-left: 0.5em;">
+                        <input type="password" name="password2" placeholder="Repeat password"
+                               class="u__field u-text2 t6Color"
+                               style="padding-left: 0.5em;">
+
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div class="u-flex-column-center tErrColor u-text1 u-text-align-center"
+                                         style=" max-width: 70%;">
+                                        <p>{{ error|escape }}</p>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+
+                        <button class="u-submit u-text2 t5Color">SIGN UP</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

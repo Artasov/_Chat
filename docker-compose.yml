@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  web:
+    build: ./
+    environment:
+      - DB_HOST=host.docker.internal
+      - POSTGRES_NAME=${POSTGRES_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+      - DEBUG=${DEBUG}
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 8000:8000
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - postgres
+      - redis
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+#    volumes:
+#      - ./data/redis/data:/data
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/postgres/:/var/lib/postgresql/data
+
+

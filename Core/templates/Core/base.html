@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>{% block title %} {% endblock %}</title>
+    <link href="{% static 'Core/css/u.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'Core/css/style.css' %}" rel="stylesheet" type="text/css">
+    {% block link_content_css %}{% endblock %}
+{#	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">#}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<link rel="icon" type="image/png" href='{% static 'Core/img/title_icon.png' %}'>
+
+	<meta name="format-detection" content="telephone=no">
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<meta name="Author" content="">
+	<meta name="Copyright" content="">
+	<meta name="Address" content="Russia">
+	<meta property="og:locale" content="ru_RU">
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="">
+	<meta property="og:description" content="">
+	<meta property="og:image" content="">
+	<meta property="og:url" content="">
+	<meta property="og:site_name" content="">
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:site" content="">
+	<meta name="twitter:title" content="xlartas">
+	<meta name="twitter:description" content="">
+	<meta name="twitter:image" content="">
+</head>
+<body class="body" style="background-color: #252525;">
+    <div class="wrapper">
+        {% if not without_header %}
+        {% include 'Core/includes/header.html' %}
+        {% endif %}
+        {% block content %}{% endblock %}
+        {% block footer %}{% endblock %}
+        {% block script %}{% endblock %}
+    </div>
+    <script src="{% static 'Core/js/check_device.js' %}"></script>
+</body>
+</html>
+
+

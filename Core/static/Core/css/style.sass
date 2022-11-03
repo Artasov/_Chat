@@ -1,0 +1,102 @@
+//СОЗДАНИЕ ШАБЛОНА:
+//%имя_шаблона
+//   color: red
+//ПРИМЕНЕНИЕ:
+//@extend %имя_шаблона
+//
+//Расположение объявления шаблона влияет на расположение и в css.
+//То есть если он со своими свойствами будет ниже чего-то, то он 
+//перезапишет данный свойства, если выше то соответственно нет.
+//
+// СОЗДАНИЕ MIXIN:
+//=имя($f, $c)
+//   font-size: $f
+//   color: $c
+//
+//ПРИМЕНЕНИЕ:
+//+имя(100px, #ffffff)
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&display=swap')
+@import "nullStyle"
+@import "adaptiv_mixin"
+@import "service_block"
+@import "vars"
+
+.wrapper
+   font-family: 'Outfit', sans-serif
+   min-height: 100%
+   +bgColor(1)
+   display: flex
+   font-weight: 300
+   flex-direction: column
+   overflow: hidden
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// @media (min-width: 3840px)
+   
+
+
+// @media (min-width: 1920px) and (max-width: 3839px)
+   
+
+// @media (max-width: 279px)
+
+
+
+

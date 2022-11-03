@@ -1,0 +1,83 @@
+.chat
+	//border: 1px solid blue
+	.chat-messages
+		//border: 1px solid green
+		padding: 1em 1em 0 1em
+		overflow-y: scroll
+		gap: 1em
+		width: 100%
+		position: relative
+		flex-grow: 1
+		&:last-child
+			margin-bottom: 200px !important
+		.chat-message-block
+			//border: 1px solid green
+			width: 100%
+			max-width: 100%
+			&:first-child
+				margin-top: auto !important
+				
+			&:last-child
+				margin-bottom: 1em
+			
+			
+			
+			.chat-message
+				//border: 1px solid blue
+				align-self: start
+				max-width: 60%
+				min-width: 30%
+				background-color: rgba(245, 245, 245, 1)
+				border-radius: 0.7em
+				padding: 0.7em 0.9em 1.8em 1.1em
+				box-shadow: 0 0 7px rgba(0, 0, 0, 0.15)
+				gap: 0.35em !important
+				position: relative
+			
+			.chat-user
+				max-width: 100%
+				font-weight: 500
+			
+			.chat-user-message
+				word-break: break-word
+				max-width: 100%
+				color: #585858
+			
+			.chat-message_bySelf
+				align-self: end
+				background-color: rgb(206, 122, 255) !important
+				
+				.chat-user-message
+					color: white
+				
+				.chat-message-info
+					bottom: 0 !important
+			
+			.chat-message-info
+				gap: 3px
+				position: absolute
+				right: 0.5em
+				bottom: 4px
+				max-height: 18px
+	
+	.chat-send_field
+		//border: 1px solid red
+		width: 100%
+		padding: 1em 1em 0 1em
+		position: relative
+		.chat-send_input_field-block
+			width: 100%
+			.chat-send_input_field
+				//border: 1px solid red
+				width: 100%
+				resize: none
+				max-height: 600px
+				overflow-y: scroll
+				height: 23px
+				//max-width: 100%
+		
+		.chat-send_btn
+			transition: all 300ms ease
+			
+			&:active
+				transform: scale(1.1)

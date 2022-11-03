@@ -1,0 +1,72 @@
+{% extends 'Core/base.html' %}
+{% load static %}
+
+{% block title %}Rooms{% endblock %}
+{% block link_content_css %}
+    <link href="{% static 'APP_Room/css/room.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block content %}
+    <div style="position: absolute; height: 70px; top: 0; right: 2em;">
+        <a class="u-img-block" href="{% url 'logout' %}"
+           style="height: 100%;">
+            <img src="{% static 'APP_Room/img/logout.png' %}" alt="" class="u-img"
+                 style="max-height: 30px; filter: invert(0.3);">
+        </a>
+    </div>
+
+    <div class="u">
+        <div class="u__container">
+            <div class="
+            u__content
+            u__styled_content
+            u-flex-column-center
+            no_scrollbar
+            u-disable-tap-highlight">
+                <div class="u__fields no_scrollbar"
+                     style="overflow-y: scroll; max-height: calc(100vh - 160px)!important;">
+                    <div class="u-flex-column-center">
+                        <p class="u-text5 t5Color">Rooms</p>
+                    </div>
+                    <form method="post" action="{% url 'create_room' %}" class="u__fields">{% csrf_token %}
+                        <div class="u-flex-column-space-between no_scrollbar"
+                             style="
+                             overflow-y: scroll;
+                             max-height: 300px;
+                             gap: 1em;
+                             padding: 1.5em;
+                             width: 80%;">
+                            {% for room in rooms %}
+                                <a href="{% url 'room' room.slug %}"
+                                   class="
+                                    u-flex-row-space-between
+                                    room_entrance">
+                                    <p class="u-text2 t4Color">{{ room.name }}</p>
+                                    <div class="u-img-block" style="max-height: 20px;">
+                                        <img src="{% static 'APP_Room/img/room_entrance.png' %}" alt="#"
+                                             class="u-img" style="max-height: 20px; filter: invert(0.2);">
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                        <input type="text" name="name" placeholder="Room name"
+                               class="u__field u-text2 t6Color"
+                               style="padding-left: 0.5em;">
+
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div class="u-flex-column-center tErrColor u-text1 u-text-align-center"
+                                         style=" max-width: 70%;">
+                                        <p>{{ error|escape }}</p>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+
+                        <button class="u-submit u-text2 t5Color">CREATE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,93 @@
+@import "adaptiv_mixin"
+   
+h2
+   +adaptive-font(45, 35, 1100)
+   display: block
+   text-align: center
+   padding: 20px 0
+
+.info-nick
+   +adaptive-font(65, 50, 1100)
+   font-weight: 400
+   display: block
+   text-align: center
+   padding: 20px 0 0 0
+   color: #ececec
+
+.info-name
+   +adaptive-font(30, 20, 1100)
+   display: block
+   text-align: center
+   padding: 0 0 20px 0
+
+.links
+   transition: all 200ms
+   width: 60%
+   margin: 20px auto
+   font-weight: 400
+   user-select: none
+   display: flex
+   justify-content: space-between
+   +adaptiv-value('padding-left', 1100, 1920, 90, 30, 3)
+   +adaptiv-value('padding-right', 1100, 1920, 90, 30, 3)
+   a
+      color: rgba(255, 255, 255, 0.7)
+      transition: all 400ms
+      +adaptive-font(40, 25, 1100)
+      &:hover
+         transform: scale(1.3)
+.info
+   padding-top: 40px
+   font-family: 'Outfit', sans-serif
+   font-weight: 500
+   display: block
+   width: 100%
+   color: rgba(255, 255, 255, 0.7)
+   .info__el
+      +adaptiv-value('padding-left', 1100, 1920, 80, 20, 3)
+      +adaptiv-value('padding-right', 1100, 1920, 80, 20, 3)
+      .info__el-description
+         display: grid
+         grid-template: minmax(0fr, auto) / 1fr
+         .info__el-description-name
+            position: relative
+            text-align: center
+            +adaptive-font(30, 20, 1100)
+            font-weight: 400
+            margin: 0 0 15px 0
+            .ico-up-down
+               position: absolute
+               +adaptiv-value('right', 1100, 1920, 5, -10, 3)
+               +adaptive-font(16, 13, 1100)
+               +adaptiv-valueByHeight('top', 1000, 1080, 560, 15, 5, 3)
+         .info__el-description-text
+            // border: 1px solid red
+            transition: all 400ms ease
+            +adaptive-font(20, 15, 1100)
+            font-weight: 300
+            +adaptiv-value('line-height', 1100, 1920, 30, 20, 3)
+            height: 0%
+            display: none
+            overflow: hidden
+            margin-bottom: 15px
+      .info__el-table
+         display: grid
+         grid-template: 1fr / 1fr 1fr
+         +adaptiv-valueByHeight('grid-row-gap', 1000, 1080, 560, 20, 8, 3)
+         +adaptiv-value('grid-column-gap', 1100, 1920, 15, 4, 3)
+         margin-bottom: 25px
+         .info__el-table-el
+            // border: 1px solid red
+            +adaptiv-valueByHeight('padding-top', 1000, 1080, 560, 22, 8, 3)
+            +adaptiv-valueByHeight('padding-bottom', 1000, 1080, 560, 22, 8, 3)
+            +adaptiv-valueByHeight('padding-left', 1000, 1080, 560, 22, 8, 3)
+            +adaptiv-valueByHeight('padding-right', 1000, 1080, 560, 22, 8, 3)
+            display: flex
+            flex-direction: column
+            justify-content: center
+            background: rgba(255, 255, 255, 0.13)
+            .info__el-table-el-description
+               +adaptive-font(20, 15, 1100)
+            .info__el-table-el-price
+               text-align: center
+               +adaptive-font(20, 13, 1100)
