@@ -215,12 +215,16 @@
 
             const messageInputDom = document.querySelector('#chat-message-input');
             let message = messageInputDom.value;
-            if (message.value == null ||
-                message.value == undefined ||
-                message.length == 0){
+            let a = document.createElement('p');
+            a.innerHTML = message
+            if (String(a.innerHTML).replace('\n', '') === '') {
                 messageInputDom.value = '';
+                let evt = document.createEvent("HTMLEvents")
+                evt.initEvent("input", false, true);
+                messageInputDom.dispatchEvent(evt);
                 return false;
             }
+            console.log('AAAA')
             let time_for_user = new Date(Date.now());
             let bySelf;
             let username_if_need;
