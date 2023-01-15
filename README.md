@@ -6,8 +6,8 @@
 2. In the `terminal` (Windows/Linux).
 
     ```
-    git clone https://github.com/Artasov/Chat.git
-    cd Chat
+    git clone https://github.com/Artasov/_Chat.git
+    cd _Chat
     docker-compose up --build
     ```
 3. Go to:
